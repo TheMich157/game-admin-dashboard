@@ -1,36 +1,46 @@
-// Mock data for testing
-const mockEvents = [
-    { time: '2024-01-20 10:30:15', event: 'Lockdown', details: 'Manual trigger by admin', status: 'Active' },
-    { time: '2024-01-20 10:15:00', event: 'Core Warning', details: 'Temperature exceeding normal levels', status: 'Resolved' },
-    { time: '2024-01-20 09:45:30', event: 'Radiation Leak', details: 'Sector B containment breach', status: 'Active' }
-];
-
-const mockAppeals = [
-    { username: 'Player123', reason: 'Wrongful ban - mistaken identity', date: '2024-01-19', status: 'Pending' },
-    { username: 'Gamer456', reason: 'False report by other player', date: '2024-01-18', status: 'Approved' },
-    { username: 'User789', reason: 'Accidental violation', date: '2024-01-17', status: 'Rejected' }
-];
+const API_BASE_URL = 'http://localhost:3000/api';
 
 // Login handling
-document.addEventListener('DOMContentLoaded', () => {
+const initializeLogin = () => {
     const loginForm = document.getElementById('loginForm');
-    
-    loginForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+    const loginSection = document.getElementById('loginSection');
+    const dashboardSection = document.getElementById('dashboardSection');
 
-        // Mock authentication - replace with actual authentication
+    if (!loginForm || !loginSection || !dashboardSection) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    const handleLogin = (event) => {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        console.log('Login attempt:', { username });
+
         if (username === 'admin' && password === 'admin') {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
+            console.log('Login successful');
+            loginSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
             loadInitialData();
-            showPanel('events'); // Show events panel by default
+            showPanel('events');
         } else {
-            alert('Invalid credentials');
+            console.log('Login failed');
+            alert('Invalid credentials. Please try again.');
         }
-    });
-});
+    };
+
+    // Attach submit event listener
+    loginForm.addEventListener('submit', handleLogin);
+};
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLogin);
+} else {
+    initializeLogin();
+}
 
 // Panel navigation
 function showPanel(panelName) {
@@ -49,96 +59,85 @@ function loadInitialData() {
     loadAppeals();
 }
 
-// Load events into table
-function loadEvents() {
+// Load events from API
+async function loadEvents() {
     const tbody = document.getElementById('eventsTableBody');
     tbody.innerHTML = '';
 
-    mockEvents.forEach(event => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${event.time}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${event.event}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${event.details}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${event.status === 'Active' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
-                    ${event.status}
-                </span>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
+    try {
+        const response = await fetch(\`\${API_BASE_URL}/events\`);
+        const events = await response.json();
+
+        events.forEach(event => {
+            const row = document.createElement('tr');
+            row.innerHTML = \`
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${new Date(event.timestamp * 1000).toLocaleString()}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">\${event.eventName}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${event.details.initiator || ''}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        Active
+                    </span>
+                </td>
+            \`;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Failed to load events:', error);
+    }
 }
 
-// Load appeals into table
-function loadAppeals() {
+// Load appeals from API
+async function loadAppeals() {
     const tbody = document.getElementById('appealsTableBody');
     tbody.innerHTML = '';
 
-    mockAppeals.forEach(appeal => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${appeal.username}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${appeal.reason}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${appeal.date}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${getStatusColor(appeal.status)}">
-                    ${appeal.status}
-                </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                ${appeal.status === 'Pending' ? `
-                    <button onclick="handleAppeal('${appeal.username}', 'approve')" 
-                        class="text-green-600 hover:text-green-900 mr-3">
-                        Approve
-                    </button>
-                    <button onclick="handleAppeal('${appeal.username}', 'reject')" 
-                        class="text-red-600 hover:text-red-900">
-                        Reject
-                    </button>
-                ` : ''}
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
+    try {
+        const response = await fetch(\`\${API_BASE_URL}/appeals\`);
+        const appeals = await response.json();
 
-// Get status color for appeals
-function getStatusColor(status) {
-    switch(status) {
-        case 'Pending':
-            return 'bg-yellow-100 text-yellow-800';
-        case 'Approved':
-            return 'bg-green-100 text-green-800';
-        case 'Rejected':
-            return 'bg-red-100 text-red-800';
-        default:
-            return 'bg-gray-100 text-gray-800';
+        appeals.forEach(appeal => {
+            const row = document.createElement('tr');
+            row.innerHTML = \`
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">\${appeal.player}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${appeal.appeal.reason || ''}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${new Date(appeal.timestamp * 1000).toLocaleDateString()}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        \${appeal.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    \${appeal.status === 'Pending' ? \`
+                        <button onclick="handleAppeal('\${appeal.player}', 'approve')" class="text-green-600 hover:text-green-900 mr-3">Approve</button>
+                        <button onclick="handleAppeal('\${appeal.player}', 'reject')" class="text-red-600 hover:text-red-900">Reject</button>
+                    \` : ''}
+                </td>
+            \`;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Failed to load appeals:', error);
     }
 }
 
 // Handle facility events
 function triggerEvent(eventType) {
-    const eventDetails = {
-        time: new Date().toLocaleString(),
-        event: eventType.charAt(0).toUpperCase() + eventType.slice(1),
-        details: `Manually triggered by admin`,
-        status: 'Active'
-    };
-
-    mockEvents.unshift(eventDetails);
-    loadEvents();
+    fetch(\`\${API_BASE_URL}/admin-actions\`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: eventType, admin: 'admin', timestamp: Date.now() })
+    }).then(() => {
+        loadEvents();
+    }).catch(console.error);
 }
 
 // Handle appeal actions
 function handleAppeal(username, action) {
-    const appeal = mockAppeals.find(a => a.username === username);
-    if (appeal) {
-        appeal.status = action === 'approve' ? 'Approved' : 'Rejected';
-        loadAppeals();
-    }
+    // Implement API call to update appeal status here
+    console.log(\`Appeal \${action} for user: \${username}\`);
+    // For demo, just reload appeals
+    loadAppeals();
 }
 
 // Show events panel by default after login
