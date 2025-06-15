@@ -9,6 +9,8 @@ local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
 local UpdateCoreStatus = RemoteEvents:WaitForChild("UpdateCoreStatus")
 local TriggerAlarm = RemoteEvents:WaitForChild("TriggerAlarm")
 
+local GameLogManager = require(script.Parent:WaitForChild("GameLogManager"))
+
 -- Core stavové módy
 local CoreStates = {
 	"Normal",
@@ -29,6 +31,9 @@ local function setCoreState(newState)
 	if currentState == newState then return end
 	currentState = newState
 	print("[CoreControl] Stav core sa zmenil na:", newState)
+
+	-- Log core state change
+	GameLogManager:logEvent("CoreStateChange", {newState = newState})
 
 	-- Vizuálna aktualizácia cez klienta
 	UpdateCoreStatus:FireAllClients(newState)
