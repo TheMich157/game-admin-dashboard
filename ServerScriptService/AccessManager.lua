@@ -7,6 +7,8 @@ local Players = game:GetService("Players")
 local remoteFolder = ReplicatedStorage:WaitForChild("RemoteEvents")
 local accessRequest = remoteFolder:WaitForChild("AccessRequest")
 
+local GameLogManager = require(script.Parent:WaitForChild("GameLogManager"))
+
 -- Dvere majú priradenú hodnotu: RequiredAccessLevel (IntValue)
 -- Hráči majú: IntValue "KeycardLevel" v leaderstats alebo Humanoid
 
@@ -21,6 +23,10 @@ local function getPlayerAccessLevel(player)
 	return 0
 end
 
+local function logAdminAction(adminPlayer, action, details)
+	GameLogManager:logAdminAction(adminPlayer, action, details)
+end
+
 -- Handler pre AccessRequest RemoteFunction
 accessRequest.OnServerInvoke = function(player, door)
 	if not player or not door or not door:IsA("Model") then return false end
@@ -33,10 +39,14 @@ accessRequest.OnServerInvoke = function(player, door)
 	if playerAccess >= requiredLevel.Value then
 		-- Access granted
 		print("[AccessManager] Access granted to", player.Name, "for door:", door.Name)
+		-- Log access granted
+		logAdminAction(player, "AccessGranted", {door = door.Name})
 		return true
 	else
 		-- Access denied
 		print("[AccessManager] Access denied to", player.Name, "for door:", door.Name)
+		-- Log access denied
+		logAdminAction(player, "AccessDenied", {door = door.Name})
 		return false
 	end
 end
