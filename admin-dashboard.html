@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { background: #181f2a; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; }
+        .container { max-inline-size: 900px; margin: 40px auto; background: #232b3a; border-radius: 16px; box-shadow: 0 8px 32px #0005; padding: 2rem; }
+        .tabs { display: flex; gap: 1rem; margin-block-end: 2rem; }
+        .tab { padding: 0.5rem 1.5rem; border-radius: 8px 8px 0 0; background: #232b3a; cursor: pointer; font-weight: bold; }
+        .tab.active { background: #7ecfff; color: #181f2a; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .btn { background: #7ecfff; color: #181f2a; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-size: 1rem; font-weight: bold; cursor: pointer; margin-block-start: 1rem; }
+        .btn:hover { background: #5bb6e6; }
+        .list { margin-block-start: 1rem; }
+        .list li { margin-block-end: 0.5rem; }
+        .admin-badge { background: #ffb347; color: #232b3a; border-radius: 6px; padding: 0.2rem 0.7rem; font-size: 0.9rem; margin-inline-start: 0.5rem; }
+        .logout-btn { position: absolute; inset-block-start: 2rem; inset-inline-end: 2rem; background: #e74c3c; color: #fff; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .logout-btn:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+    <div class="container animate__animated animate__fadeInDown">
+        <h1>Admin Dashboard <span class="admin-badge">Admin</span></h1>
+        <div id="userInfo" style="margin-block-end:1rem;"></div>
+        <div class="tabs" id="dashboardTabs">
+            <div class="tab active" data-tab="home">Home</div>
+            <div class="tab" data-tab="appeals">Ban Appeals</div>
+            <div class="tab" data-tab="admin">Admin Panel</div>
+        </div>
+        <div class="section active" id="homeSection">
+            <h2>Welcome!</h2>
+            <p>This is your admin dashboard. Use the tabs above to navigate.</p>
+        </div>
+        <div class="section" id="appealsSection">
+            <h2>Ban Appeals</h2>
+            <div>
+                <h3>All Appeals</h3>
+                <ul id="allAppealsList"></ul>
+            </div>
+        </div>
+        <div class="section" id="adminSection">
+            <h2>Admin Actions</h2>
+            <button class="btn" onclick="triggerAdminAction('Lockdown')">Trigger Lockdown</button>
+            <button class="btn" onclick="triggerAdminAction('Blackout')">Trigger Blackout</button>
+            <!-- Add more admin actions as needed -->
+        </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Log out</button>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

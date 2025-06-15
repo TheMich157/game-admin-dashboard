@@ -2,34 +2,202 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="20" />
+    <meta http-equiv="refresh" content="10" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Server Offline</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         body {
-            background-color: #111;
+            background: radial-gradient(circle at 50% 30%, #232526 0%, #414345 100%);
             color: #eee;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            block-size: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .message {
             text-align: center;
             font-size: 2rem;
             border: 2px solid #eee;
             padding: 2rem 4rem;
-            border-radius: 8px;
-            background-color: #222;
+            border-radius: 12px;
+            background-color: #222b;
+            box-shadow: 0 8px 32px 0 #0005;
+            margin-block-end: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .sad-face {
+            font-size: 4rem;
+            animation: shake 1.5s infinite;
+            display: inline-block;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+        .counter {
+            font-size: 1.2rem;
+            color: #ffb4b4;
+            margin-block-start: 1rem;
+        }
+        .music-note {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.7;
+            animation: floatNote 4s linear infinite;
+        }
+        @keyframes floatNote {
+            0% { inset-block-end: 0; inset-inline-start: 50%; opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { inset-block-end: 100vh; inset-inline-start: 60%; opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <div class="message">
-        Server is offline.<br />
-        This page will refresh every 20 seconds.
+    <div class="message animate__animated animate__fadeInDown">
+        <div class="sad-face">😢</div>
+        <div>Game Portal is <span style="color:#ff6b6b;">offline</span>.<br>
+        We're feeling blue without you!</div>
+        <div class="counter" id="downtimeCounter">Down for 0 seconds</div>
+        <div style="margin-block-start:1rem;font-size:1rem;color:#aaa;">
+            This page will refresh every 10 seconds.
+        </div>
+        <button id="adminLoginBtn" class="mt-6 bg-gradient-to-br from-gray-700 to-gray-900 text-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2 text-lg font-semibold animate__animated animate__pulse animate__infinite" style="border:2px solid #444;">
+            <span id="loginEmoji">🔐</span> Admin Login
+        </button>
     </div>
+    <audio id="bgMusic" loop autoplay>
+        <source src="music/track1.mp3" type="audio/mp3">
+    </audio>
+    <button id="muteBtn" class="fixed bottom-6 right-6 z-50 bg-gradient-to-br from-blue-700 to-blue-400 text-white rounded-full p-4 shadow-2xl border-4 border-white/20 hover:scale-110 transition-all duration-300 flex items-center justify-center group" title="Mute/Unmute Music" aria-label="Mute or unmute background music">
+        <span id="muteIcon" class="text-3xl transition-all duration-300 group-hover:scale-125">🔊</span>
+    </button>
+    <div id="notes"></div>
+    <script>
+        const music = document.getElementById('bgMusic');
+        const muteBtn = document.getElementById('muteBtn');
+        const muteIcon = document.getElementById('muteIcon');
+        const loginEmoji = document.getElementById('loginEmoji');
+
+        // Mute/Unmute Logic
+        let muted = localStorage.getItem('musicMuted') === 'true';
+        music.volume = 0.25;
+        music.muted = muted;
+        muteIcon.textContent = muted ? '🔇' : '🔊';
+        muteBtn.onclick = () => {
+            muted = !muted;
+            music.muted = muted;
+            muteIcon.textContent = muted ? '🔇' : '🔊';
+            localStorage.setItem('musicMuted', muted);
+            debug('Music mute toggled:', muted);
+        };
+
+        // Downtime counter logic
+        // Store the first time we went offline in localStorage
+        let downSince = localStorage.getItem('portalDownSince');
+        if (!downSince) {
+            downSince = Date.now();
+            localStorage.setItem('portalDownSince', downSince);
+        }
+        function updateCounter() {
+            const seconds = Math.floor((Date.now() - downSince) / 1000);
+            let msg = `Down for ${seconds} second${seconds !== 1 ? 's' : ''}`;
+            if (seconds > 60) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                msg = `Down for ${mins} minute${mins !== 1 ? 's' : ''} ${secs} second${secs !== 1 ? 's' : ''}`;
+            }
+            document.getElementById('downtimeCounter').textContent = msg;
+        }
+        updateCounter();
+        setInterval(updateCounter, 1000);
+
+        // On successful reload, clear the downtime
+        window.addEventListener('pageshow', function() {
+            fetch('/api/health').then(r => {
+                if (r.ok) localStorage.removeItem('portalDownSince');
+            });
+        });
+
+        // Floating notes
+        function spawnNote() {
+            const notes = ['🎵','🎶','🎼','🎷','🎸','🎹','🥁'];
+            const note = document.createElement('div');
+            note.className = 'music-note';
+            note.textContent = notes[Math.floor(Math.random()*notes.length)];
+            note.style.left = (40 + Math.random()*20) + '%';
+            note.style.bottom = '0';
+            note.style.animationDuration = (3 + Math.random()*2) + 's';
+            document.getElementById('notes').appendChild(note);
+            setTimeout(() => note.remove(), 4000);
+        }
+        setInterval(spawnNote, 900);
+
+        // Admin login button
+        document.getElementById('adminLoginBtn').onclick = function() {
+            debug('Admin login button clicked, redirecting to login');
+            window.location.href = "index.html?offline=1";
+        };
+
+        // Emoji animation based on music track
+        const trackEmojis = {
+            "track1.mp3": "🎸",
+            "track2.mp3": "🎹",
+            "track3.mp3": "🎷"
+        };
+        function animateEmoji() {
+            const src = music.currentSrc || music.src;
+            let emoji = "🔐";
+            Object.keys(trackEmojis).forEach(track => {
+                if (src.includes(track)) emoji = trackEmojis[track];
+            });
+            loginEmoji.textContent = emoji;
+            loginEmoji.classList.remove('animate__bounce');
+            void loginEmoji.offsetWidth;
+            loginEmoji.classList.add('animate__bounce');
+        }
+        music.onplay = animateEmoji;
+        music.onended = animateEmoji;
+        music.onloadeddata = animateEmoji;
+        setInterval(animateEmoji, 2000);
+
+        // Debug logger
+        function debug(...args) {
+            console.log('[DEBUG]', ...args);
+        }
+
+        music.onplay = () => debug('Music started');
+        music.onpause = () => debug('Music paused');
+        music.onended = () => debug('Music ended');
+        music.onloadeddata = () => debug('Music loaded:', music.currentSrc);
+    </script>
+
+    <script>
+        // Debugging: Log when the page is loaded
+        console.log('[DEBUG] Offline page loaded');
+        </script>
+    <script>
+        // Debugging: Log when the music is muted/unmuted
+        console.log('[DEBUG] Music muted state:', music.muted);
+        // Debugging: Log when the admin login button is clicked
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            console.log('[DEBUG] Admin login button clicked');
+        }); 
+           </script>
+    <script>
+        // Debugging: Log when the downtime counter is updated
+        setInterval(() => {
+            console.log('[DEBUG] Downtime counter updated');
+        }, 1000);
+    </script>
 </body>
 </html>

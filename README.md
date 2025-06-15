@@ -1,5 +1,3 @@
-
-
 ---
 
 # Game Admin Dashboard
@@ -58,6 +56,19 @@ The project's structure is organized as follows:
 │   └── dashboard.js    # JavaScript file for dynamic functionality (not included in the provided content)
 └── README.md          # Project documentation
 ```
+
+## API Endpoints
+
+- `POST /api/register` — Register a new user
+- `POST /api/auth/login` — Login
+- `GET /api/banstatus/:username` — Check if a Roblox user is banned
+- `POST /api/roblox/unban` — Unban a Roblox user (requires API key)
+- ...add others as needed
+
+## Environment Variables
+
+- `JWT_SECRET`
+- `ROBLOX_API_KEY`
 
 ## Conclusion
 This Game Admin Dashboard provides a robust interface for game administrators, allowing them to effectively manage their operations. For further modifications or contributions, feel free to fork the repository and submit pull requests.

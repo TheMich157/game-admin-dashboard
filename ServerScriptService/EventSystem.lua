@@ -62,6 +62,24 @@ local function activateEvent(eventName, initiator)
 	end)
 end
 
+local function isAdmin(player)
+    -- Example: check group rank or leaderstats
+    if player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Role") then
+        local role = player.leaderstats.Role.Value
+        return role == "Admin" or role == "Owner"
+    end
+    return false
+end
+
+-- Listen for admin event triggers (from RemoteEvent)
+TriggerEvent.OnServerEvent:Connect(function(player, eventName)
+    if not isAdmin(player) then
+        warn("[EventSystem] Non-admin tried to trigger event:", player.Name, eventName)
+        return
+    end
+    activateEvent(eventName, player.Name)
+end)
+
 -- Prístup z iných skriptov
 _G.EventSystem = {
 	Activate = activateEvent,

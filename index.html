@@ -2,166 +2,168 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Game Portal Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-            color: #f9fafb;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: #222;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-block-size: 100vh;
+            margin: 0;
         }
-        /* Smooth fade-in animation */
-        .fade-in {
-            animation: fadeIn 0.8s ease-in forwards;
-            opacity: 0;
+        .container {
+            max-inline-size: 400px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px 0 #0002;
+            padding: 2.5rem 2rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2b6cb0;
+            text-align: center;
+            margin-block-end: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .tab-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-block-end: 1rem;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-block-end: 2px solid transparent;
+            transition: color 0.2s, border-bottom 0.2s;
+        }
+        .tab-btn.active {
+            color: #2b6cb0;
+            border-block-end: 2px solid #2b6cb0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-block-end: 0.2rem;
+        }
+        input {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            background: #f7fafc;
+            font-size: 1rem;
+            color: #222;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        input:focus {
+            border-color: #2b6cb0;
+            outline: none;
+            box-shadow: 0 0 0 2px #90cdf4;
+        }
+        .submit-btn {
+            background: #2b6cb0;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-block-start: 0.5rem;
+        }
+        .submit-btn:hover, .submit-btn:focus {
+            background: #22577a;
+        }
+        .form-message {
+            color: #e53e3e;
+            font-size: 0.95rem;
+            min-block-size: 1.2em;
+            text-align: center;
+        }
+        .hidden { display: none; }
+        @media (max-inline-size: 500px) {
+            .container { margin: 0.5rem; padding: 1.5rem 0.5rem; }
         }
     </style>
 </head>
-<body class="bg-gray-900">
-    <!-- Login Section -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center bg-gray-900 fade-in">
-        <div class="max-w-md w-full space-y-8 p-10 bg-gray-800 rounded-xl shadow-xl border border-gray-700">
-            <div class="text-center">
-                <h2 class="text-4xl font-extrabold text-white tracking-tight">Admin Dashboard</h2>
-                <p class="mt-2 text-sm text-gray-400">Sign in to access the dashboard</p>
-            </div>
-            <form class="mt-8 space-y-6" id="loginForm" method="POST" autocomplete="off">
-                <div class="rounded-md shadow-sm -space-y-px">
-                    <div>
-                        <input id="username" name="username" type="text" required autocomplete="username"
-                            class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-600 placeholder-gray-400 text-white rounded-t-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-700" 
-                            placeholder="Username">
-                    </div>
-                    <div>
-                        <input id="password" name="password" type="password" required autocomplete="current-password"
-                            class="appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-600 placeholder-gray-400 text-white rounded-b-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm bg-gray-700" 
-                            placeholder="Password">
-                    </div>
-                </div>
-                <div>
-                    <button type="submit" 
-                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out">
-                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </span>
-                        Sign in
-                    </button>
-                </div>
-            </form>
+<body>
+<script>
+(async function() {
+    try {
+        const res = await fetch('/api/health', { cache: "no-store" });
+        if (!res.ok) throw new Error();
+    } catch {
+        window.location.replace("offline.html");
+    }
+})();
+</script>
+    <div class="container animate__animated animate__fadeInDown">
+        <h1>Game Portal</h1>
+        <div class="tab-toggle">
+            <button id="showLoginBtn" class="tab-btn active" type="button">Login</button>
+            <button id="showRegisterBtn" class="tab-btn" type="button">Register</button>
         </div>
+        <form id="loginForm" autocomplete="on">
+            <div>
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" required autocomplete="username" />
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required autocomplete="current-password" />
+            </div>
+            <div id="loginMessage" class="form-message"></div>
+            <button class="submit-btn" type="submit">Log In</button>
+        </form>
+        <form id="registerForm" class="hidden" autocomplete="on">
+            <div>
+                <label for="regUsername">Username</label>
+                <input id="regUsername" name="regUsername" type="text" required autocomplete="username" />
+            </div>
+            <div>
+                <label for="regPassword">Password</label>
+                <input id="regPassword" name="regPassword" type="password" required autocomplete="new-password" />
+            </div>
+            <div class="form-message" id="registerMessage"></div>
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
     </div>
-
-    <!-- Dashboard Section (Hidden by default) -->
-    <div id="dashboardSection" class="hidden min-h-screen bg-gray-100">
-        <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 w-64 bg-black text-white">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold">Admin Panel</h1>
-            </div>
-            <nav class="mt-6">
-                <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800" onclick="showPanel('events')">
-                    <span class="mr-3"><i class="fas fa-chart-line"></i></span>
-                    Live Events
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800" onclick="showPanel('admin')">
-                    <span class="mr-3"><i class="fas fa-shield-alt"></i></span>
-                    Admin Controls
-                </a>
-                <a href="#" class="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800" onclick="showPanel('appeals')">
-                    <span class="mr-3"><i class="fas fa-gavel"></i></span>
-                    Ban Appeals
-                </a>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="ml-64 p-8">
-            <!-- Events Panel -->
-            <div id="eventsPanel" class="space-y-6 fade-in">
-                <h2 class="text-3xl font-semibold text-white">Live Events</h2>
-                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead class="bg-gray-900">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Time</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Event</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Details</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-gray-900 divide-y divide-gray-700" id="eventsTableBody">
-                            <!-- Events will be dynamically added here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Admin Controls Panel -->
-            <div id="adminPanel" class="hidden space-y-6 fade-in">
-                <h2 class="text-3xl font-semibold text-white">Admin Controls</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
-                        <h3 class="text-xl font-semibold mb-6 text-indigo-400">Facility Controls</h3>
-                        <div class="space-y-4">
-                            <button onclick="triggerEvent('lockdown')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Trigger Lockdown
-                            </button>
-                            <button onclick="triggerEvent('radiation')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Simulate Radiation Leak
-                            </button>
-                            <button onclick="triggerEvent('blackout')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Initiate Blackout
-                            </button>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
-                        <h3 class="text-xl font-semibold mb-6 text-indigo-400">Core Controls</h3>
-                        <div class="space-y-4">
-                            <button onclick="triggerEvent('core-warning')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Core Warning State
-                            </button>
-                            <button onclick="triggerEvent('core-critical')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Core Critical State
-                            </button>
-                            <button onclick="triggerEvent('core-meltdown')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out">
-                                Initiate Meltdown
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ban Appeals Panel -->
-            <div id="appealsPanel" class="hidden space-y-6 fade-in">
-                <h2 class="text-3xl font-semibold text-white">Ban Appeals</h2>
-                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead class="bg-gray-900">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Username</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Reason</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-gray-900 divide-y divide-gray-700" id="appealsTableBody">
-                            <!-- Appeals will be dynamically added here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/dashboard.js"></script>
+    <script>
+    // Modern tab toggle logic
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    showLoginBtn.onclick = () => {
+        showLoginBtn.classList.add('active');
+        showRegisterBtn.classList.remove('active');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+    };
+    showRegisterBtn.onclick = () => {
+        showRegisterBtn.classList.add('active');
+        showLoginBtn.classList.remove('active');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    };
+    </script>
 </body>
 </html>

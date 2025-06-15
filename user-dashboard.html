@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { background: #181f2a; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; }
+        .container { max-inline-size: 700px; margin: 40px auto; background: #232b3a; border-radius: 16px; box-shadow: 0 8px 32px #0005; padding: 2rem; }
+        .tabs { display: flex; gap: 1rem; margin-block-end: 2rem; }
+        .tab { padding: 0.5rem 1.5rem; border-radius: 8px 8px 0 0; background: #232b3a; cursor: pointer; font-weight: bold; }
+        .tab.active { background: #7ecfff; color: #181f2a; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .btn { background: #7ecfff; color: #181f2a; border: none; border-radius: 8px; padding: 0.5rem 1.2rem; font-size: 1rem; font-weight: bold; cursor: pointer; margin-block-start: 1rem; }
+        .btn:hover { background: #5bb6e6; }
+        .list { margin-block-start: 1rem; }
+        .list li { margin-block-end: 0.5rem; }
+        .notification {
+            background: #edf2f7;
+            color: #2b6cb0;
+            border-inline-start: 4px solid #2b6cb0;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-block-end: 1rem;
+            display: none;
+        }
+        .notification.error {
+            background: #fff5f5;
+            color: #c53030;
+            border-inline-start-color: #c53030;
+        }
+        .logout-btn {
+            position: absolute;
+            inset-block-start: 2rem;
+            inset-inline-end: 2rem;
+            background: #e53e3e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <button class="logout-btn" id="logoutBtn">Log out</button>
+    <div class="container animate__animated animate__fadeInDown">
+        <h1>User Dashboard</h1>
+        <div id="userInfo" style="margin-block-end:1rem;"></div>
+        <div class="tabs" id="dashboardTabs">
+            <div class="tab active" data-tab="home">Home</div>
+            <div class="tab" data-tab="appeals">Ban Appeals</div>
+            <div class="tab" data-tab="profile">Profile</div>
+        </div>
+        <div class="section active" id="homeSection">
+            <h2>Welcome!</h2>
+            <p>This is your user dashboard. Use the tabs above to navigate.</p>
+        </div>
+        <div class="section" id="appealsSection">
+            <h2>Ban Appeals</h2>
+            <div class="notification" id="appealNotification"></div>
+            <form id="appealForm" autocomplete="off">
+                <div>
+                    <label for="robloxUsername">Roblox Username</label>
+                    <input id="robloxUsername" name="robloxUsername" type="text" required />
+                    <div id="banStatus" style="color:#c53030;font-size:0.95rem;margin-block-start:0.2rem;"></div>
+                </div>
+                <div>
+                    <label for="appealQ1">Why do you think you were banned?</label>
+                    <input id="appealQ1" name="appealQ1" type="text" required />
+                </div>
+                <div>
+                    <label for="appealQ2">Why should we unban you?</label>
+                    <input id="appealQ2" name="appealQ2" type="text" required />
+                </div>
+                <button type="submit" class="btn">Submit Appeal</button>
+            </form>
+            <div class="list">
+                <h3>Your Appeals</h3>
+                <ul id="appealsList"></ul>
+            </div>
+        </div>
+        <div class="section" id="profileSection">
+            <h2>Your Profile</h2>
+            <div id="profileInfo"></div>
+        </div>
+    </div>
+    <script src="js/user-dashboard.js"></script>
+</body>
+</html>

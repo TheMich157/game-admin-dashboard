@@ -16,10 +16,7 @@ local appeals = {}
 
 -- Player submits a ban appeal
 SubmitAppealEvent.OnServerEvent:Connect(function(player, reason)
-    if not reason or reason == "" then
-        return
-    end
-
+    if not reason or reason == "" then return end
     local appealId = tostring(player.UserId) .. "-" .. tostring(os.time())
     appeals[appealId] = {
         player = player.Name,
@@ -28,9 +25,7 @@ SubmitAppealEvent.OnServerEvent:Connect(function(player, reason)
         status = "Pending",
         submittedAt = os.time()
     }
-
     GameLogManager:logBanAppeal(player, {appealId = appealId, reason = reason})
-
     print("[BanAppealsSystem] New ban appeal submitted by", player.Name, "ID:", appealId)
 end)
 
