@@ -8,6 +8,8 @@ local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
 local TriggerEvent = RemoteEvents:WaitForChild("TriggerEvent")
 local MessageEvent = RemoteEvents:WaitForChild("GlobalSystemMessage")
 
+local GameLogManager = require(script.Parent:WaitForChild("GameLogManager"))
+
 -- Aktívne eventy
 local ActiveEvents = {}
 
@@ -20,6 +22,9 @@ local function activateEvent(eventName, initiator)
 
 	ActiveEvents[eventName] = true
 	print("[EventSystem] Aktivovaný event:", eventName)
+
+	-- Log event
+	GameLogManager:logEvent(eventName, {initiator = initiator or "system"})
 
 	-- Klientské vizuály
 	TriggerEvent:FireAllClients(eventName)
