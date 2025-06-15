@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -8,9 +9,13 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+// Initialize in-memory storage
 let events = [];
 let appeals = [];
 let adminActions = [];
+
+// Serve static files from current directory
+app.use(express.static(path.join(__dirname)));
 
 // Endpoint to receive logs
 app.post('/api/logs', (req, res) => {
@@ -52,6 +57,11 @@ app.get('/api/appeals', (req, res) => {
 // Endpoint to get admin actions
 app.get('/api/admin-actions', (req, res) => {
     res.json(adminActions);
+});
+
+// Serve index.html at root
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
